@@ -13,17 +13,27 @@ FIXERS_TO_VERSIONS = {
     '3.2.0': v3_2_0_session_header_format.fix_layout,
 }
 
+branch_coverages = {
+    "action_none": False,
+    "action_upgrade": False,
+    "action_upgrade_all": False,
+    "action_other": False
+}
 
 def cli_sessions(env: Environment, args: argparse.Namespace) -> ExitStatus:
     action = args.cli_sessions_action
     if action is None:
+        branch_coverages["action_none"] = True
         parser.error(missing_subcommand('cli', 'sessions'))
 
     if action == 'upgrade':
+        branch_coverages["action_upgrade"] = True
         return cli_upgrade_session(env, args)
     elif action == 'upgrade-all':
+        branch_coverages["action_upgrade_all"] = True
         return cli_upgrade_all_sessions(env, args)
     else:
+        branch_coverages["action_other"] = True
         raise ValueError(f'Unexpected action: {action}')
 
 
