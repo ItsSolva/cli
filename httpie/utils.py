@@ -225,6 +225,11 @@ def as_site(path: Path, **extra_vars) -> Path:
     )
     return Path(site_packages_path)
 
+branch_coverages = {
+    "is_frozen": False,
+    "is_frozen_loop": False,
+    "not_frozen": False
+}
 
 def get_site_paths(path: Path) -> Iterable[Path]:
     from httpie.compat import (
@@ -234,14 +239,17 @@ def get_site_paths(path: Path) -> Iterable[Path]:
     )
 
     if is_frozen:
+        branch_coverages["is_frozen"] = True
         [major, min_minor] = MIN_SUPPORTED_PY_VERSION
         [major, max_minor] = MAX_SUPPORTED_PY_VERSION
         for minor in range(min_minor, max_minor + 1):
+            branch_coverages["is_frozen_loop"] = True
             yield as_site(
                 path,
                 py_version_short=f'{major}.{minor}'
             )
     else:
+        branch_coverages["not_frozen"] = True
         yield as_site(path)
 
 
