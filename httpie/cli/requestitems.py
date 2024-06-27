@@ -208,23 +208,34 @@ def process_data_raw_json_embed_arg(arg: KeyValueArg) -> JSONType:
 def process_data_nested_json_embed_args(pairs) -> Dict[str, JSONType]:
     return interpret_nested_json(pairs)
 
+branch_coverages = {
+    "open_file_try": False,
+    "open_file_oserror": False,
+    "open_file_unicode_error": False,
+    "parse_json_try": False,
+    "parse_json_value_error": False,
+}
 
 def load_text_file(item: KeyValueArg) -> str:
     path = item.value
     try:
+        branch_coverages["open_file_try"] = True
         with open(os.path.expanduser(path), 'rb') as f:
             return f.read().decode()
     except OSError as e:
+        branch_coverages["open_file_oserror"] = True
         raise ParseError(f'{item.orig!r}: {e}')
     except UnicodeDecodeError:
+        branch_coverages["open_file_unicode_error"] = True
         raise ParseError(
             f'{item.orig!r}: cannot embed the content of {item.value!r},'
             ' not a UTF-8 or ASCII-encoded text file'
         )
 
-
 def load_json(arg: KeyValueArg, contents: str) -> JSONType:
     try:
+        branch_coverages["parse_json_try"] = True
         return load_json_preserve_order_and_dupe_keys(contents)
     except ValueError as e:
+        branch_coverages["parse_json_value_error"] = True
         raise ParseError(f'{arg.orig!r}: {e}')
