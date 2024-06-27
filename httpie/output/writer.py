@@ -23,6 +23,14 @@ from ..utils import parse_content_type_header
 MESSAGE_SEPARATOR = '\n\n'
 MESSAGE_SEPARATOR_BYTES = MESSAGE_SEPARATOR.encode()
 
+branch_coverages = {
+    "no_output_options": False,
+    "normal": False,
+    "windows_with_colors": False,
+    "windows_without_colors": False,
+    "oserror": False,
+    "oserror_traceback": False
+}
 
 def write_message(
     requests_message: RequestsMessage,
@@ -32,6 +40,7 @@ def write_message(
     extra_stream_kwargs: Optional[Dict[str, Any]] = None
 ):
     if not output_options.any():
+        branch_coverages["no_output_options"] = True
         return
     write_stream_kwargs = {
         'stream': build_output_stream_for_message(
@@ -47,14 +56,18 @@ def write_message(
     }
     try:
         if env.is_windows and 'colors' in processing_options.get_prettify(env):
+            branch_coverages["windows_with_colors"] = True
             write_stream_with_colors_win(**write_stream_kwargs)
         else:
+            branch_coverages["windows_without_colors"] = True
             write_stream(**write_stream_kwargs)
     except OSError as e:
         if processing_options.show_traceback and e.errno == errno.EPIPE:
+            branch_coverages["oserror_traceback"] = True
             # Ignore broken pipes unless --traceback.
             env.stderr.write('\n')
         else:
+            branch_coverages["oserror"] = True
             raise
 
 
@@ -72,8 +85,8 @@ def write_stream(
 
     for chunk in stream:
         buf.write(chunk)
-        if flush:
-            outfile.flush()
+    if flush:
+        outfile.flush()
 
 
 def write_stream_with_colors_win(
@@ -84,7 +97,6 @@ def write_stream_with_colors_win(
     """Like `write`, but colorized chunks are written as text
     directly to `outfile` to ensure it gets processed by colorama.
     Applies only to Windows and colorized terminal output.
-
     """
     color = b'\x1b['
     encoding = outfile.encoding
@@ -93,8 +105,8 @@ def write_stream_with_colors_win(
             outfile.write(chunk.decode(encoding))
         else:
             outfile.buffer.write(chunk)
-        if flush:
-            outfile.flush()
+    if flush:
+        outfile.flush()
 
 
 def write_raw_data(
@@ -157,7 +169,6 @@ def get_stream_type_and_kwargs(
     headers: HTTPHeadersDict,
 ) -> Tuple[Type['BaseStream'], dict]:
     """Pick the right stream type and kwargs for it based on `env` and `args`.
-
     """
     is_stream = processing_options.stream
     prettify_groups = processing_options.get_prettify(env)
