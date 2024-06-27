@@ -1,113 +1,322 @@
-<h2 align="center">
-    <a href="https://httpie.io" target="blank_">
-        <img height="100" alt="HTTPie" src="https://raw.githubusercontent.com/httpie/cli/master/docs/httpie-logo.svg" />
-    </a>
-    <br>
-    HTTPie CLI: human-friendly HTTP client for the API era
-</h2>
 
-<div align="center">
+# Report for Assignment 1
 
-[![HTTPie for Desktop](https://img.shields.io/static/v1?label=HTTPie&message=Desktop&color=4B78E6)](https://httpie.io/product)
-[![](https://img.shields.io/static/v1?label=HTTPie&message=Web%20%26%20Mobile&color=73DC8C)](https://httpie.io/app)
-[![](https://img.shields.io/static/v1?label=HTTPie&message=CLI&color=FA9BFA)](https://httpie.io/cli)
-[![Twitter](https://img.shields.io/twitter/follow/httpie?style=flat&color=%234B78E6&logoColor=%234B78E6)](https://twitter.com/httpie)
-[![Chat](https://img.shields.io/discord/725351238698270761?style=flat&label=Chat%20on%20Discord&color=%23FA9BFA)](https://httpie.io/discord)
+## Project Chosen
 
-</div>
+**Name:** HTTPie CLI: human-friendly HTTP client for the API era
+
+**URL:** [https://github.com/httpie/cli](https://github.com/httpie/cli)
+
+**Number of lines of code and the tool used to count it:**
+The HTTPie CLI project has around 14,924 lines. The Lizard library was used to count the amount of lines.
+
+![lizard](/readme_images%20/Picture%201.png)
 
 
-<div align="center">
+**Programming language:** Python
 
-[![Docs](https://img.shields.io/badge/stable%20docs-httpie.io%2Fdocs%2Fcli-brightgreen?style=flat&color=%2373DC8C&label=Docs)](https://httpie.org/docs/cli)
-[![Latest version](https://img.shields.io/pypi/v/httpie.svg?style=flat&label=Latest&color=%234B78E6&logo=&logoColor=white)](https://pypi.python.org/pypi/httpie)
-[![Build](https://img.shields.io/github/actions/workflow/status/httpie/cli/tests.yml?branch=master&color=%23FA9BFA&label=Build)](https://github.com/httpie/cli/actions)
-[![Coverage](https://img.shields.io/codecov/c/github/httpie/cli?style=flat&label=Coverage&color=%2373DC8C)](https://codecov.io/gh/httpie/cli)
-[![PyPi downloads](https://img.shields.io/pepy/dt/httpie?style=flat&label=Downloads%20from%20PyPi%20only&color=4B78E6)](https://www.pepy.tech/projects/httpie)
+## Coverage Measurement
 
-</div>
+### Existing Tool
 
-HTTPie (pronounced _aitch-tee-tee-pie_) is a command-line HTTP client.
-Its goal is to make CLI interaction with web services as human-friendly as possible.
-HTTPie is designed for testing, debugging, and generally interacting with APIs & HTTP servers.
-The `http` & `https` commands allow for creating and sending arbitrary HTTP requests.
-They use simple and natural syntax and provide formatted and colorized output.
+Since the project we chose is written in Python, we used `coverage.py` tool for checking if our tests cover functions and branches within the chosen code.
 
-<div align="center">
+After following the installation steps provided in the manual as a link to the documentation, and running the tests with the command `coverage run -m --branch pytest tests`, followed by running the command `coverage report -m`, we get this:
 
-<img src="https://raw.githubusercontent.com/httpie/cli/master/docs/httpie-animation.gif" alt="HTTPie in action" width="100%"/>
+![lizard](/readme_images%20/coverage1.png)
+![lizard](/readme_images%20/coverage2.png)
+#
+### Your Own Coverage Tool
+
+For our own coverage tool, we created the following functions:
+- `test_print_coverage()`: This functions checks all flags in every branch and prints whether or not the branch has been reached.
+- `get_coverage_percentage()`: This functions calculates the branch coverage.
+- `print_colored()`: This function is used in the `test_print_coverage()` function for a more visual result of the branch coverage. 
+
+#
+
+#### Mohamed
+**cli_sessions()**
+- Link to commit: https://github.com/httpie/cli/commit/8dc36b271548e8371cb48d388c799bb2fb73cd63
+- Old Coverage 71%:
+
+![lizard](/readme_images%20/coverage_cli_sessions.png)
+ 
+- New Coverage (with our own tool):
+
+![lizard](/readme_images%20/new_coverage_sessions.png)
+ 
+ - How?
+  - Added these flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/coverage_branches_sessions.png)
+
+  - Then we created a new test file and we added these tests:
+
+![lizard](/readme_images%20/tests_sessions.png)
+
+  - Lastly, we output the coverage with this print function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+
+  `python -m pytest -s our_tool/test_cli_sessions.py`
+  
+#
+
+**get_site_paths()**
+- Link to commit: https://github.com/httpie/cli/commit/3f898e26874b1dcec026c00909c7dc59ca0ddac5
+- Old Coverage 36%:
+
+![lizard](/readme_images%20/coverage_site.png)
+ 
+- New Coverage (with our own tool):
+
+![lizard](/readme_images%20/new_coverage_site.png)
+ 
+ - How?
+  - Added these flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branch_site.png)
+
+  - Then we created a new test file and we added these tests:
+
+![lizard](/readme_images%20/test_site.png)
+
+  - Lastly, we output the coverage with this print function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+`python -m pytest -s our_tool/test_utils.py`
+
+- Tests about get_site_paths improved:
+
+- Old Coverage 36%:
+
+#
+
+#### Christina
+**load_text_file()**:
+- Link to commit: https://github.com/httpie/cli/commit/8dc36b271548e8371cb48d388c799bb2fb73cd63
+- File path: `httpie/cli/requestitems.py`
+- Old coverage of the function: 30%
+
+![lizard](/readme_images%20/coverage_load.png)
+
+- New Coverage (with our own tool)
+
+![lizard](/readme_images%20/new_coverage_load.png)
+
+- How?
+  - We added flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branches_load.png)
+  - Then we created a new test file in our tool and we added these tests:
+
+![lizard](/readme_images%20/test_load.png)
+
+  - Lastly, we print our coverage by this function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+  `python -m pytest -s our_tool/test_requestitems.py`
+  
+#
+
+**print_manual()**
+  - Link to commit: https://github.com/httpie/cli/commit/ea48fbc194bbfd9c049c6593c317daf664a80f10
+  - File path: `httpie/cli/argparser.py`
+
+  - Old coverage of the function: 0%
+    
+![lizard](/readme_images%20/print_manual.png)
+
+  - New Coverage (with our own tool)
+  
+![lizard](/readme_images%20/new_print_coverage.png)
+
+  - How?
+    - We added flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branches_manual.png)
+
+  - Then we created a new test file in our tool and we added these tests:
+
+![lizard](/readme_images%20/test_manual.png)
+
+  - Lastly, we print our coverage by this function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+  `python -m pytest -s our_tool/test_argparser.py`
+
+#
+
+#### Alua:
+**write_message()**:
+- Link to commit: https://github.com/httpie/cli/commit/ed2a3271bb7a68057dc8f15b886cb37374afc0d7
+- File path: `httpie/output/writer.py`
+- Old coverage: 79%
+
+![lizard](/readme_images%20/write_message.png)
+
+- New Coverage (with own tool): 100%
+
+![lizard](/readme_images%20/new_coverage_write.png)
+
+- Running the command:
+
+- How?
+  - We added flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branch_write.png)
+
+  - Then we created a new test file in our tool and we added these tests:
+
+![lizard](/readme_images%20/branch_test.png)
+  
+  - Then, we print coverage with our own tool using this function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+  `python -m pytest -s our_tool/test_writer.py`
+  
+#
+
+**__iter__()**
+- Link to commit: https://github.com/httpie/cli/commit/ebb711eed69f848e0db27abbe5d7e55a7a83ec32
+- File path: `httpie/uploads.py`
+- Old coverage of function: 0%
+
+![lizard](/readme_images%20/iter.png)
+
+- New coverage: 100%
+
+![lizard](/readme_images%20/new_coverage_uploads.png)
+
+- How?
+  - We added these flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branch_iter.png)
+
+  - Then we created test functions for each branch:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - Then, we print coverage with our own tool using this function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+  
+  `python -m pytest -s our_tool/test_uploads.py`
+  
+#
+
+#### Bo:
+**get_dist_name()**
+- Link to commit: https://github.com/httpie/cli/commit/7079a1de79fa966772333bf7ae90f4e1d4ca2457
+- Path: `httpie\compat.py`
+- Old coverage: 0%
+
+![lizard](/readme_images%20/name.png)
+
+- New coverage: 100%
+
+![lizard](/readme_images%20/new_coverage_name.png)
+
+- How?
+  - Added these flags to every branch for our own tool to check which branch has been reached.
+
+![lizard](/readme_images%20/branches_name.png)
+
+  - Then we created a new test file and we added these tests:
+  
+![lizard](/readme_images%20/tests_name.png)
+
+  - Lastly, we output the coverage with this print function:
+
+![lizard](/readme_images%20/print_coverage.png)
+
+  - To run the test, we use the following command:
+
+  `python -m pytest -s our_tool/test_get_dist_name.py`
+  
+#
+
+**fetch_updates()**
+  - Link to commit: https://github.com/httpie/cli/commit/0689242bccb89f6703d574103e789af8ca9c5fa6
+  - Path: `httpie\internal\update_warnings.py`
+  - Old coverage: 0%
+
+  ![lizard](/readme_images%20/fetch.png)
+
+  - New coverage: 100%
+
+  ![lizard](/readme_images%20/new_coverage_fetch.png)
+
+  - How?
+    - Added these flags to every branch for our own tool to check which branch has been reached.
+
+  ![lizard](/readme_images%20/branch_fetch.png)
+
+    - Then we created a new test file and we added these tests:
+   
+  ![lizard](/readme_images%20/test_fetch.png)
+
+    - Lastly, we output the coverage with this print function:
+   
+   ![lizard](/readme_images%20/print_coverage.png)
+  
+  - To run the test, we use the following command:
+
+  `python -m pytest -s our_tool/test_update_warnings.py`
+  
+#    
+
+### Overall
+
+**Total Old Coverage (89%)**
+
+![lizard](/readme_images%20/coverage1.png)
+![lizard](/readme_images%20/coverage2.png)
+
+**Total New Coverage(91%)**
+![lizard](/readme_images%20/new_total_coverage4.png)
+![lizard](/readme_images%20/new_total_coverage3.png)
+![lizard](/readme_images%20/new_total_coverage2.png)
+![lizard](/readme_images%20/new_total_coverage1.png)
+
+## Statement of Individual Contributions
+
+**Mohamed**
+- Assisted in researching potential projects.
+- Selected and instrumented functions for coverage measurement. 
+- Developed and enhanced test cases. 
+- Prepared sections of the final report. 
+ 
+**Christina**
+ - Assisted in researching potential projects.
+ - Selected and instrumented functions for coverage measurement.
+ - Developed and enhanced test cases.
+ - Compiled findings into the README.md.
+
+**Alua**
+ - Found the project.
+ - Selected and instrumented functions for coverage measurement.
+ - Developed and enhanced test cases. 
+ - Prepared sections of the final report. 
+
+ **Bo** 
+ - Reviewed project criteria and ensured compliance. 
+ - Selected and instrumented functions for coverage measurement. 
+ - Developed and enhanced test cases. 
+ - Reviewed push requests. 
 
 
-</div>
 
-
-
-
-## We lost 54k GitHub stars
-
-Please note we recently accidentally made this repo private for a moment, and GitHub deleted our community that took a decade to build. Read the full story here: https://httpie.io/blog/stardust
-
-![](docs/stardust.png)
-
-
-## Getting started
-
-- [Installation instructions →](https://httpie.io/docs#installation)
-- [Full documentation →](https://httpie.io/docs)
-
-## Features
-
-- Expressive and intuitive syntax
-- Formatted and colorized terminal output
-- Built-in JSON support
-- Forms and file uploads
-- HTTPS, proxies, and authentication
-- Arbitrary request data
-- Custom headers
-- Persistent sessions
-- `wget`-like downloads
-
-[See all features →](https://httpie.io/docs)
-
-## Examples
-
-Hello World:
-
-```bash
-https httpie.io/hello
-```
-
-Custom [HTTP method](https://httpie.io/docs#http-method), [HTTP headers](https://httpie.io/docs#http-headers) and [JSON](https://httpie.io/docs#json) data:
-
-```bash
-http PUT pie.dev/put X-API-Token:123 name=John
-```
-
-Build and print a request without sending it using [offline mode](https://httpie.io/docs/cli/offline-mode):
-
-```bash
-http --offline pie.dev/post hello=offline
-```
-
-Use [GitHub API](https://developer.github.com/v3/issues/comments/#create-a-comment) to post a comment on an [Issue](https://github.com/httpie/cli/issues/83) with [authentication](https://httpie.io/docs#authentication):
-
-```bash
-http -a USERNAME POST https://api.github.com/repos/httpie/cli/issues/83/comments body='HTTPie is awesome! :heart:'
-```
-
-[See more examples →](https://httpie.io/docs#examples)
-
-## Community & support
-
-- Visit the [HTTPie website](https://httpie.io) for full documentation and useful links.
-- Join our [Discord server](https://httpie.io/discord) is to ask questions, discuss features, and for general API chat.
-- Tweet at [@httpie](https://twitter.com/httpie) on Twitter.
-- Use [StackOverflow](https://stackoverflow.com/questions/tagged/httpie) to ask questions and include a `httpie` tag.
-- Create [GitHub Issues](https://github.com/httpie/cli/issues) for bug reports and feature requests.
-- Subscribe to the [HTTPie newsletter](https://httpie.io) for occasional updates.
-
-## Contributing
-
-Have a look through existing [Issues](https://github.com/httpie/cli/issues) and [Pull Requests](https://github.com/httpie/cli/pulls) that you could help with. If you'd like to request a feature or report a bug, please [create a GitHub Issue](https://github.com/httpie/cli/issues) using one of the templates provided.
-
-[See contribution guide →](https://github.com/httpie/cli/blob/master/CONTRIBUTING.md)
