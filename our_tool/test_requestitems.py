@@ -1,26 +1,7 @@
 import unittest
 from unittest.mock import patch, mock_open
 from httpie.cli.requestitems import KeyValueArg, ParseError, load_json, load_text_file, branch_coverages
-
-def print_colored(text, color):
-    colors = {
-        "red": "\033[91m",
-        "green": "\033[92m",
-        "yellow": "\033[93m",
-        "blue": "\033[94m",
-        "magenta": "\033[95m",
-        "cyan": "\033[96m",
-        "white": "\033[97m",
-        "reset": "\033[0m"
-    }
-    
-    color_code = colors.get(color.lower(), colors["reset"])
-    print(f"{color_code}{text}{colors['reset']}")
-
-def get_coverage_percentage():
-    total_branches = len(branch_coverages)
-    executed_branches = sum([1 for value in branch_coverages.values() if value])
-    return (executed_branches / total_branches) * 100
+from branch_tool import print_colored, get_coverage_percentage
 
 class TestLoadFunctions(unittest.TestCase):
 
@@ -67,12 +48,12 @@ def test_print_coverage():
             print_colored("not executed", "red")
     print("==========================================")
 
-    if get_coverage_percentage() == 100:
-        print_colored(f" Total coverage: {get_coverage_percentage()}%", "green")
-    elif get_coverage_percentage() > 0:
-        print_colored(f" Total coverage: {get_coverage_percentage()}%", "yellow")
+    if get_coverage_percentage(branch_coverages) == 100:
+        print_colored(f" Total coverage: {get_coverage_percentage(branch_coverages)}%", "green")
+    elif get_coverage_percentage(branch_coverages) > 0:
+        print_colored(f" Total coverage: {get_coverage_percentage(branch_coverages)}%", "yellow")
     else:
-        print_colored(f" Total coverage: {get_coverage_percentage()}%", "red")
+        print_colored(f" Total coverage: {get_coverage_percentage(branch_coverages)}%", "red")
 
 if __name__ == '__main__':
     unittest.main()

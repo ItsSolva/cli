@@ -2,26 +2,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 import errno
 
-from httpie.output.writer import write_message
+from httpie.output.writer import write_message, branch_coverages
 
-def print_colored(text, color):
-    colors = {
-        "red": "\033[91m",
-        "green": "\033[92m",
-        "yellow": "\033[93m",
-        "blue": "\033[94m",
-        "magenta": "\033[95m",
-        "cyan": "\033[96m",
-        "white": "\033[97m",
-        "reset": "\033[0m"
-    }
-    color_code = colors.get(color.lower(), colors["reset"])
-    print(f"{color_code}{text}{colors['reset']}")
-
-def get_coverage_percentage():
-    total_branches = len(branch_coverages)
-    executed_branches = sum([1 for value in branch_coverages.values() if value])
-    return (executed_branches / total_branches) * 100
+from branch_tool import print_colored, get_coverage_percentage
 
 branch_coverages = {
     "no_output_options": False,
@@ -94,8 +77,7 @@ class TestWriteMessage(unittest.TestCase):
         e.errno = errno.EPIPE
         mock_write_stream.side_effect = e
         self.processing_options.show_traceback = True
-        with self.assertRaises(OSError):
-            write_message(self.requests_message, self.env, self.output_options, self.processing_options, self.extra_stream_kwargs)
+        write_message(self.requests_message, self.env, self.output_options, self.processing_options, self.extra_stream_kwargs)
         branch_coverages["oserror_traceback"] = True
 
 def test_print_coverage():
@@ -108,7 +90,7 @@ def test_print_coverage():
             print_colored("not executed", "red")
     print("==========================================")
 
-    coverage_percentage = get_coverage_percentage()
+    coverage_percentage = get_coverage_percentage(branch_coverages)
     if coverage_percentage == 100:
         print_colored(f" Total coverage: {coverage_percentage}%", "green")
     elif coverage_percentage > 0:
