@@ -52,13 +52,27 @@ class ChunkedMultipartUploadStream(ChunkedStream):
         self.encoder = encoder
         self.event = event
 
+    global branch_coverages
+    branch_coverages = {
+        "enter_loop": False,
+        "read_chunk": False,
+        "event_set": False,
+        "no_chunk": False,
+        "yield_chunk": False,
+    }
+
     def __iter__(self) -> Iterable[Union[str, bytes]]:
+        branch_coverages["enter_loop"] = True
         while True:
+            branch_coverages["read_chunk"] = True
             chunk = self.encoder.read(self.chunk_size)
             if self.event:
+                branch_coverages["event_set"] = True
                 self.event.set()
             if not chunk:
+                branch_coverages["no_chunk"] = True
                 break
+            branch_coverages["yield_chunk"] = True
             yield chunk
 
 
@@ -160,16 +174,16 @@ def _prepare_file_for_upload(
             # Read the whole stdin to determine `Content-Length`.
             #
             # TODO: Instead of opt-in --chunked, consider making
-            #   `Transfer-Encoding: chunked` for STDIN opt-out via
-            #   something like --no-chunked.
-            #   This would be backwards-incompatible so wait until v3.0.0.
+            # `Transfer-Encoding: chunked` for STDIN opt-out via
+            # something like --no-chunked.
+            # This would be backwards-incompatible so wait until v3.0.0.
             #
             file = _read_file_with_selectors(file, read_event)
-    else:
-        file.read = _wrap_function_with_callback(
-            file.read,
-            callback
-        )
+        else:
+            file.read = _wrap_function_with_callback(
+                file.read,
+                callback
+            )
 
     if chunked:
         from requests_toolbelt import MultipartEncoder
@@ -242,8 +256,8 @@ def get_multipart_data_and_content_type(
         content_type = content_type.strip()
         if 'boundary=' not in content_type:
             content_type = f'{content_type}; boundary={encoder.boundary_value}'
-    else:
-        content_type = encoder.content_type
+        else:
+            content_type = encoder.content_type
 
     data = encoder
     return data, content_type
