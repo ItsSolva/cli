@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import Mock, patch
 from httpie.compat import get_dist_name, branch_coverages
 import importlib_metadata
 
@@ -26,23 +26,40 @@ def get_coverage_percentage():
 
 class TestGetDistName(unittest.TestCase):
 
-    @patch('importlib_metadata.EntryPoint')
-    def test_no_match(self, mock_entry_point):
-        mock_entry_point.dist = None
-        mock_entry_point.pattern.match.return_value = None
-        result = get_dist_name(mock_entry_point)
+    @patch('httpie.compat.getattr')
+    def test_get_dist_name_dist_not_none(self, mock_getattr):
+        entry_point = Mock()
+        dist = Mock()
+        dist.name = 'test_dist'
+        mock_getattr.return_value = dist
+
+        result = get_dist_name(entry_point)
+
+        self.assertEqual(result, 'test_dist')
+        mock_getattr.assert_called_once_with(entry_point, 'dist', None)
+
+    @patch('httpie.compat.getattr', return_value=None)
+    def test_get_dist_name_no_match(self, mock_getattr):
+        entry_point = Mock()
+        entry_point.pattern.match.return_value = None
+
+        result = get_dist_name(entry_point)
+
         self.assertIsNone(result)
+        self.assertIn("get_dist_name_1", branch_coverages)
         self.assertTrue(branch_coverages["get_dist_name_1"])
 
-    @patch('importlib_metadata.EntryPoint')
-    @patch('importlib_metadata.metadata', side_effect=importlib_metadata.PackageNotFoundError)
-    def test_package_not_found(self, mock_metadata, mock_entry_point):
-        mock_entry_point.dist = None
-        mock_entry_point.pattern.match.return_value.group.return_value = 'test_module'
-        result = get_dist_name(mock_entry_point)
-        self.assertIsNone(result)
-        self.assertTrue(branch_coverages["get_dist_name_2"])
+    @patch('httpie.compat.getattr', return_value=None)
+    @patch('httpie.compat.importlib_metadata.metadata')
+    def test_get_dist_name_success(self, mock_metadata, mock_getattr):
+        entry_point = Mock()
+        entry_point.pattern.match.return_value.group.return_value = 'module'
+        metadata = {'name': 'test_metadata'}
+        mock_metadata.return_value = metadata
 
+        result = get_dist_name(entry_point)
+
+        self.assertEqual(result, 'test_metadata')
 
 
 def test_print_coverage():

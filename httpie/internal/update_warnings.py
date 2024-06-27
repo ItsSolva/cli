@@ -51,11 +51,17 @@ def _fetch_updates(env: Environment) -> str:
     with open_with_lockfile(file, 'w') as stream:
         json.dump(data, stream)
 
+branch_coverages = {
+    "if_branch": False,
+    "else_branch": False
+}
 
 def fetch_updates(env: Environment, lazy: bool = True):
     if lazy:
+        branch_coverages["if_branch"] = True
         spawn_daemon('fetch_updates')
     else:
+        branch_coverages["else_branch"] = True
         _fetch_updates(env)
 
 

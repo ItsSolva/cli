@@ -86,24 +86,26 @@ def find_entry_points(entry_points: Any, group: str) -> Iterable[importlib_metad
 branch_coverages = {
     "get_dist_name_1": False,  # if branch for dist is not None
     "get_dist_name_2": False,  # if branch for not (match and match.group('module'))
+    "get_dist_name_3": False,  # if branch for dist is not None
 }
 
 
 def get_dist_name(entry_point: importlib_metadata.EntryPoint) -> Optional[str]:
     dist = getattr(entry_point, "dist", None)
     if dist is not None:  # Python 3.10+
+        branch_coverages["get_dist_name_1"] = True
         return dist.name
 
     match = entry_point.pattern.match(entry_point.value)
     if not (match and match.group('module')):
-        branch_coverages["get_dist_name_1"] = True
+        branch_coverages["get_dist_name_2"] = True
         return None
 
     package = match.group('module').split('.')[0]
     try:
         metadata = importlib_metadata.metadata(package)
     except importlib_metadata.PackageNotFoundError:
-        branch_coverages["get_dist_name_2"] = True
         return None
     else:
+        branch_coverages["get_dist_name_3"] = True
         return metadata.get('name')
