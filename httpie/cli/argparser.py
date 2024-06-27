@@ -6,6 +6,7 @@ import sys
 from argparse import RawDescriptionHelpFormatter
 from textwrap import dedent
 from urllib.parse import urlsplit
+from httpie.output.ui import man_pages
 
 from requests.utils import get_netrc_auth
 
@@ -557,14 +558,23 @@ class HTTPieArgumentParser(BaseHTTPieArgumentParser):
         for options_group in format_options:
             parsed_options = parse_format_options(options_group, defaults=parsed_options)
         self.args.format_options = parsed_options
-
+    
+    global branch_coverages
+    branch_coverages = {
+    "man_page_available": False,
+    "man_page_not_available": False,
+}
+    
+    
     def print_manual(self):
         from httpie.output.ui import man_pages
-
+        global branch_coverages
         if man_pages.is_available(self.env.program_name):
+            branch_coverages["man_page_available"] = True
             man_pages.display_for(self.env, self.env.program_name)
             return None
-
+        
+        branch_coverages["man_page_not_available"] = True
         text = self.format_help()
         with self.env.rich_console.pager():
             self.env.rich_console.print(
@@ -572,6 +582,7 @@ class HTTPieArgumentParser(BaseHTTPieArgumentParser):
                 highlight=False
             )
 
+    
     def print_usage(self, file):
         from rich.text import Text
         from httpie.output.ui import rich_help
