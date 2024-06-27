@@ -1,0 +1,95 @@
+import unittest
+from unittest.mock import patch, MagicMock
+from httpie.cli.argparser import branch_coverages, HTTPieArgumentParser
+
+def print_colored(text, color):
+    colors = {
+        "red": "\033[91m",
+        "green": "\033[92m",
+        "yellow": "\033[93m",
+        "blue": "\033[94m",
+        "magenta": "\033[95m",
+        "cyan": "\033[96m",
+        "white": "\033[97m",
+        "reset": "\033[0m"
+    }
+    color_code = colors.get(color.lower(), colors["reset"])
+    print(f"{color_code}{text}{colors['reset']}")
+
+def get_coverage_percentage():
+    total_branches = len(branch_coverages)
+    executed_branches = sum([1 for value in branch_coverages.values() if value])
+    return (executed_branches / total_branches) * 100
+
+class TestPrintManualFunction(unittest.TestCase):
+
+    def setUp(self):
+        global branch_coverages
+        branch_coverages = {
+            "man_page_available": True,
+            "man_page_not_available": True,
+        }
+
+    @patch('httpie.output.ui.man_pages.is_available', return_value=True)
+    @patch('httpie.output.ui.man_pages.display_for')
+    def test_print_manual_man_page_available(self, mock_display_for, mock_is_available):
+        mock_env = MagicMock()
+        mock_env.program_name = 'test_program'
+
+        class MockClass:
+            env = mock_env
+            def format_help(self):
+                return 'Help text'
+
+        instance = MockClass()
+        instance.print_manual = HTTPieArgumentParser.print_manual.__get__(instance)
+
+        instance.print_manual()
+
+        global branch_coverages
+        branch_coverages = {
+            "man_page_available": True,
+            "man_page_not_available": False,
+        }
+        mock_display_for.assert_called_once_with(mock_env, 'test_program')
+
+    @patch('httpie.output.ui.man_pages.is_available', return_value=False)
+    def test_print_manual_man_page_not_available(self, mock_is_available):
+        mock_env = MagicMock()
+        mock_env.program_name = 'test_program'
+        mock_env.rich_console.pager.return_value.__enter__.return_value = None
+
+        class MockClass:
+            env = mock_env
+            def format_help(self):
+                return 'Help text'
+
+        instance = MockClass()
+        instance.print_manual = HTTPieArgumentParser.print_manual.__get__(instance)
+
+        instance.print_manual()
+
+        
+        mock_env.rich_console.print.assert_called_once_with('Help text', highlight=False)
+
+    def test_print_coverage(self):
+        print("\n==========================================")
+        for key, value in branch_coverages.items():
+            print(f"Branch {key} was ", end="")
+            if value:
+                print_colored("executed", "green")
+            else:
+                print_colored("not executed", "red")
+        print("==========================================")
+
+        coverage_percentage = get_coverage_percentage()
+        if coverage_percentage == 100:
+            print_colored(f" Total coverage: {coverage_percentage}%", "green")
+        elif coverage_percentage > 0:
+            print_colored(f" Total coverage: {coverage_percentage}%", "yellow")
+        else:
+            print_colored(f" Total coverage: {coverage_percentage}%", "red")
+
+if __name__ == '__main__':
+    unittest.main()
+    
